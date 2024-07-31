@@ -43,12 +43,7 @@ def updateExifTag(image):
     
 
 def clear_console():
-    # For Windows
-    if os.name == 'nt':
-        os.system('cls')
-    # For Unix-like systems (Linux, macOS)
-    else:
-        os.system('clear')
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 # def saveEditedImage(image):
