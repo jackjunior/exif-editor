@@ -1,4 +1,7 @@
-import enquiries, os
+from constants import UPDATE_MENU_OPTIONS
+import enquiries, os, re
+from datetime import datetime
+
 def checkExifValue(attribute, image):
     return True if image.get(attribute) is not None else False
 
@@ -28,23 +31,39 @@ def selectFunction(menu_selection, image):
     if menu_selection[0:1] == "6": printImageExif(image)
 
 def updateExifTag(image):
-    update_menu_options = [
-        '1. Image Date',
-        '2. Exit'
-    ]
     while True:
         clear_console()
-        update_menu_selected = enquiries.choose('Please select update item: ', update_menu_options)
+        update_menu_selected = enquiries.choose('Please select update item: ', UPDATE_MENU_OPTIONS)
         if update_menu_selected[0:1] == "1": 
             # Original datetime that image was taken (photographed)
             print(f'DateTime (Original): {image.get("datetime_original")}')
+            datetime_input = input("Enter the image new date - (yyyy/mm/dd): ")
+            validate_datetime(datetime_input)
             input("Press Enter to continue...")
         if update_menu_selected[0:1] == "2": break;
+
+def validate_datetime(input_string):
+    # Define the expected format
+    format = '%Y/%m/%d %H:%M:%S'
     
+    # Define the regular expression pattern for allowed characters
+    pattern = r'^[0-9/ :]+$'
+    
+    # Check if the input string contains only allowed characters
+    if not re.match(pattern, input_string):
+        print(f"Invalid characters in date/time string: {input_string}. Allowed characters: 0-9, /, :, space")
+    
+    try:
+        # Try to create a datetime object using the format
+        datetime_obj = datetime.strptime(input_string, format)
+        # If parsing is successful, return the datetime object
+        return datetime_obj
+    except ValueError as e:
+        # If parsing fails, return an error message
+        print(f"Invalid date/time format: {input_string}. Expected format: yyyy/mm/dd hh:mm:ss")
 
 def clear_console():
     os.system('cls' if os.name == 'nt' else 'clear')
-
 
 # def saveEditedImage(image):
 #     with open(f'{folder_path}/{img_filename}', 'wb') as new_image_file:
