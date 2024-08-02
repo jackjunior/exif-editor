@@ -1,3 +1,5 @@
+image_filename = ""
+
 FOLDER_PATH = 'sample_images'
 
 MENU_OPTIONS = [
