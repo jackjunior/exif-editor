@@ -1,6 +1,6 @@
 from exif import Image
 from helpers import selectFunction, clear_console
-from constants import FOLDER_PATH, MENU_OPTIONS
+from constants import image_filename, FOLDER_PATH, MENU_OPTIONS
 import enquiries, os, sys
 from os import walk
 
@@ -17,6 +17,7 @@ def main():
             clear_console()
             imgList = [k for k in filenames if '.jpg' in k]
             img_filename = enquiries.choose('Please select an image to edit:', imgList)
+            image_filename = img_filename
             img_path = f'{FOLDER_PATH}/{img_filename}'
 
             with open(img_path, 'rb') as img_file:

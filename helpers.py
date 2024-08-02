@@ -1,4 +1,4 @@
-from constants import UPDATE_MENU_OPTIONS
+from constants import image_filename, FOLDER_PATH, UPDATE_MENU_OPTIONS
 import enquiries, os, re
 from datetime import datetime
 
@@ -36,9 +36,18 @@ def updateExifTag(image):
         update_menu_selected = enquiries.choose('Please select update item: ', UPDATE_MENU_OPTIONS)
         if update_menu_selected[0:1] == "1": 
             # Original datetime that image was taken (photographed)
-            print(f'DateTime (Original): {image.get("datetime_original")}')
-            datetime_input = input("Enter the image new date - (yyyy/mm/dd): ")
-            validate_datetime(datetime_input)
+            while True:
+                print(f'DateTime (Original): {image.get("datetime_original")}')
+                datetime_input = input("Enter the image new date - (yyyy/mm/dd hh:mm:ss): ")
+                is_valid, validated_date = validate_datetime(datetime_input)
+                if is_valid:
+                    print('Set new datetime to image!')
+                    image.datetime_original = validated_date.strftime("%Y-%m-%d %H:%M:%S")
+                    saveEditedImage(image)
+                    break;
+                else:
+                    # Handle the error
+                    print("The date and time entered are invalid.")
             input("Press Enter to continue...")
         if update_menu_selected[0:1] == "2": break;
 
@@ -52,19 +61,21 @@ def validate_datetime(input_string):
     # Check if the input string contains only allowed characters
     if not re.match(pattern, input_string):
         print(f"Invalid characters in date/time string: {input_string}. Allowed characters: 0-9, /, :, space")
+        return False
     
     try:
         # Try to create a datetime object using the format
         datetime_obj = datetime.strptime(input_string, format)
         # If parsing is successful, return the datetime object
-        return datetime_obj
+        return True, datetime_obj
     except ValueError as e:
         # If parsing fails, return an error message
         print(f"Invalid date/time format: {input_string}. Expected format: yyyy/mm/dd hh:mm:ss")
+        return False
 
 def clear_console():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-# def saveEditedImage(image):
-#     with open(f'{folder_path}/{img_filename}', 'wb') as new_image_file:
-#                 new_image_file.write(img.get_file())
+def saveEditedImage(image):
+    with open(f'{FOLDER_PATH}/{image_filename}_edit.jpg', 'wb') as new_image_file:
+                 new_image_file.write(image.get_file())
